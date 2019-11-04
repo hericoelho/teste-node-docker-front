@@ -2,6 +2,7 @@ const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const usersRoutes = require('./routes/usersRoutes');
+const authRoutes = require('./routes/authRoutes');
 const mongoose = require('./config/database'); //database configuration
 var jwt = require('jsonwebtoken');
 const app = express();
@@ -19,7 +20,10 @@ app.get('/', function (req, res) {
 });
 
 // public route
-app.use('/api/users', usersRoutes);
+app.use('/api/users', authRoutes);
+
+// private route
+app.use('/api/users',  validateUser, usersRoutes);
 
 app.get('/favicon.ico', function (req, res) {
   res.sendStatus(204);

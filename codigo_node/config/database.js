@@ -13,3 +13,4 @@ mongoose.connect(mongoDB, {
     process.exit();
 });
 module.exports = mongoose;
+//db.createUser({user: "admin", pwd: "admin", roles: [{role: "dbOwner", db: "teste_node_mongo"}]});
