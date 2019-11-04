@@ -4,15 +4,15 @@ volumes:
   config:
 services:
   mongo:
-    image: mongo:latest
-    ports:
-      - 3306:3306
+    image: mongo:latest    
     volumes:
-      - ./data/db
+      - ./data:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: admin   
+      MONGO_INITDB_ROOT_PASSWORD: admin
     restart: always
+    ports:
+     - 27017:27017
     container_name: mongo 
     networks:
      - backendNodeMongo
@@ -23,8 +23,8 @@ services:
     ports:
       - 8081:8081
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: admin
     container_name: mongo-express  
     networks:
      - backendNodeMongo

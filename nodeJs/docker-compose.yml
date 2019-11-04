@@ -1,0 +1,23 @@
+version: '3.7'
+volumes:
+  data:
+  config:
+services:  
+  node:
+    image: node:latest
+    user: "node"
+    working_dir: /home/node/app
+    environment:
+      - NODE_ENV=production    
+    ports:
+      - 3000:3000    
+    container_name: node
+    volumes:
+      - ./../codigo_node:/home/node/app  
+    command: "npm start"  
+    networks:
+     - backendNodeMongo
+
+networks:
+ backendNodeMongo:
+  external: true
