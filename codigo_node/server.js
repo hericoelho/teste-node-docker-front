@@ -7,6 +7,8 @@ const mongoose = require('./config/database'); //database configuration
 var jwt = require('jsonwebtoken');
 const app = express();
 
+
+
 app.set('secretKey', 'nodeRestApi'); // jwt secret token
 
 // connection to mongodb
@@ -29,7 +31,12 @@ app.get('/favicon.ico', function (req, res) {
   res.sendStatus(204);
 });
 function validateUser(req, res, next) {
-  jwt.verify(req.headers['x-access-token'], req.app.get('secretKey'), function (err, decoded) {
+  let token = req.headers['x-access-token'] || req.headers['authorization']; // Express headers are auto converted to lowercase
+  if (token.startsWith('Bearer ')) {
+    // Remove Bearer from string
+    token = token.slice(7, token.length);
+  }
+  jwt.verify(token, req.app.get('secretKey'), function (err, decoded) {
     if (err) {
       res.json({ status: "error", message: err.message, data: null });
     } else {

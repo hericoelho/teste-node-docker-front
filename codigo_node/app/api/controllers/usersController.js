@@ -26,10 +26,25 @@ module.exports = {
          });
    },
    authenticate: function (req, res) {
-      userModel.findOne({ email: req.body.email }, 'nome email cpf password')
+      var email;
+      var password;
+
+      console.log(req.query);
+      if (req.body.email) {
+         email = req.body.email;
+         password = req.body.password;
+      } else {
+         email = req.query.email;
+         password = req.query.password;
+      }
+
+      userModel.findOne({ email: email }, 'nome email cpf password')
          .then(user => {
-            if (bcrypt.compareSync(req.body.password, user.password)) {
+            if (bcrypt.compareSync(password, user.password)) {
                const token = jwt.sign({ id: user._id }, req.app.get('secretKey'), { expiresIn: '1h' });
+               res.setHeader('Access-Control-Allow-Headers', 'Authorization,content-type');
+               res.setHeader('Access-Control-Expose-Headers', 'Authorization');
+               res.header('Authorization', 'Bearer ' + token);
                res.json({ status: "success", message: "Usuario autenticado com sucesso!!!", data: { user: user, token: token } });
             } else {
                res.json({ status: "error", message: "Não foi possivel autenticar o usuario. Por favor verifique os dados de email e password!!!", data: null });
@@ -122,7 +137,30 @@ module.exports = {
                message: err.message || "Ocorreu um erro ao acessar os dados do usuario id : " + req.params.id
             });
          });
-   }
+   }, refresh: function (req, res) {
+      res.status(200).send({
+         message: "Validade do token atualizada" 
+      });  
+   },fetch: function (req, res) {
+      userModel.findById(req.body.userId)
+      .then(user => {
+         if (!user) {
+            return res.status(404).send({
+               message: "Nenhum usuario encontrado para o  id : " + req.params.id
+            });
+         }
+         res.send(user);
+      }).catch(err => {
+         if (err.kind === 'ObjectId') {
+            return res.status(404).send({
+               message: "Nenhum usuario encontrado para o  id : " + req.params.id
+            });
+         }
+         res.status(500).send({
+            message: err.message || "Ocorreu um erro ao acessar os dados do usuario id : " + req.params.id
+         });
+      });
+   },
 
 
 }

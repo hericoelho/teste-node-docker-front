@@ -17,7 +17,11 @@ services:
     command: "npm start"  
     networks:
      - backendNodeMongo
+     - frontendVueNode
+
 
 networks:
  backendNodeMongo:
+  external: true
+ frontendVueNode:
   external: true
